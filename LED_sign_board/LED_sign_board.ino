@@ -5,7 +5,7 @@
 #define greenPin 9
 #define redPin 10
 #define allAction 5
-#define TimerSmalleastUnity 5
+#define TimerSmallestUnit 5
 LED_signBoard LED_control;
 
 Timer t1;
@@ -27,7 +27,7 @@ void setup() {
   modeSelect = timerStop;
   LED_control.LED_Mode_initial_set(greenPin, redPin, buttonPin);
    LED_control.LED_ON_all();
-  t1.every(TimerSmalleastUnity,timerEvent);   
+  t1.every(TimerSmallestUnit,timerEvent);   
 }
 
 void loop() {
@@ -105,25 +105,25 @@ void LED_mode_by_button() {
 
 void doHorrorLED() { 
       timerCounter++;      
-          if(timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter < 3) {
+          if(timerCounter*TimerSmallestUnit >= timerCounterGoal && horrorCounter < 3) {
              horrorCounter++;
              doBlinkLED();          
               if(horrorCounter == 3){
                 timerCounterGoal = 200;
               }
-          } else if (timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter < 6){
+          } else if (timerCounter*TimerSmallestUnit >= timerCounterGoal && horrorCounter < 6){
              horrorCounter++;
              doBlinkLED();   
                if(horrorCounter == 6){
                 timerCounterGoal = 100;
               }
-          } else if (timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter < 12){
+          } else if (timerCounter*TimerSmallestUnit >= timerCounterGoal && horrorCounter < 12){
              horrorCounter++;
              doBlinkLED();   
                if(horrorCounter == 12){
                 timerCounterGoal = 5;
               }
-          } else if (timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter == 12){     
+          } else if (timerCounter*TimerSmallestUnit >= timerCounterGoal && horrorCounter == 12){     
                timerCounter = 0;
                breatheCounter++;        
                 LED_control.LED_Breathe_all(breatheCounter);     
@@ -134,7 +134,7 @@ void doHorrorLED() {
                     timerCounterGoal = 1000;
                     LED_control.LED_OFF_all();  
                  }                     
-          } else if (timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter == 13 ) {
+          } else if (timerCounter*TimerSmallestUnit >= timerCounterGoal && horrorCounter == 13 ) {
             timerCounter = 0;
              horrorCounter = 0;  
              timerCounterGoal = 400;             
@@ -144,12 +144,12 @@ void doHorrorLED() {
  void timerEvent() {
     if (modeSelect == timerBlink) {
           timerCounter++;
-          if (timerCounter*TimerSmalleastUnity >= timerCounterGoal){
+          if (timerCounter*TimerSmallestUnit >= timerCounterGoal){
              doBlinkLED();                                
           } 
      } else if(modeSelect == timerBreathe) {
           timerCounter++;
-          if(timerCounter*TimerSmalleastUnity >= timerCounterGoal) {
+          if(timerCounter*TimerSmallestUnit >= timerCounterGoal) {
                  timerCounter = 0;
                  breatheCounter++;
                  if(breatheCounter == 256) {
