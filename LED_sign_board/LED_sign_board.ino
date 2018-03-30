@@ -4,7 +4,7 @@
 #define buttonPin 7
 #define greenPin 9
 #define redPin 10
-#define allAction 4
+#define allAction 5
 #define TimerSmalleastUnity 5
 LED_signBoard LED_control;
 
@@ -12,12 +12,14 @@ Timer t1;
 int timerCounter = 0;
 int timerCounterGoal= 0;
 bool timeArrive = 0;
-byte breatheCounter = 0;
+int breatheCounter = 0;
 byte  modeSelect;
+byte horrorCounter = 0;
 enum mode{
   timerStop = 0,
   timerBlink,
-  timerBreathe
+  timerBreathe,
+  timerHorror
 };
 
 void setup() {
@@ -59,37 +61,91 @@ void LED_mode_by_button() {
           breatheFunctionSet_all(10);  //ms
       break; 
       case 3:
+           horrorFunctionSet_all(400); //ms
+      break;
+      case 4:
+          horrorCounter = 0;
           modeSelect = timerStop;
           LED_control.LED_ON_all();  
       break;      
-      case 4:
+      case 5:
           modeSelect = timerStop;
           LED_control.LED_OFF_all();  
-      break;
+      break;     
     };  
 }
 
  void breatheFunctionSet_all(int timeSet) {      
-  modeSelect = timerStop;
-  timerCounter = 0;  
-  timerCounterGoal = timeSet;    //timeSet ms,smallest unity is TimerSmalleastUnity ms 
+  functionSet(timeSet);
   modeSelect = timerBreathe;
  }
 
  void blinkFunctionSet_all(int timeSet) { 
-  modeSelect = timerStop;
-  timerCounter = 0;
-  timerCounterGoal = timeSet;    //timeSet ms,smallest unity is TimerSmalleastUnity ms 
+  functionSet(timeSet);
   modeSelect = timerBlink;
  }
 
+ void horrorFunctionSet_all(int timeSet) {
+  functionSet(timeSet);
+  modeSelect = timerHorror;
+ }
+
+ void functionSet(int timeSet) {
+   modeSelect = timerStop;
+  timerCounter = 0;
+  timerCounterGoal = timeSet;    //timeSet ms,smallest unity is TimerSmalleastUnity ms 
+ }
+
+ void doBlinkLED() {
+       timerCounter = 0;
+       LED_control.LED_Blink_all(timeArrive);    
+       timeArrive = !timeArrive;                     
+ }
+
+
+void doHorrorLED() { 
+      timerCounter++;      
+          if(timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter < 3) {
+             horrorCounter++;
+             doBlinkLED();          
+              if(horrorCounter == 3){
+                timerCounterGoal = 200;
+              }
+          } else if (timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter < 6){
+             horrorCounter++;
+             doBlinkLED();   
+               if(horrorCounter == 6){
+                timerCounterGoal = 100;
+              }
+          } else if (timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter < 12){
+             horrorCounter++;
+             doBlinkLED();   
+               if(horrorCounter == 12){
+                timerCounterGoal = 5;
+              }
+          } else if (timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter == 12){     
+               timerCounter = 0;
+               breatheCounter++;        
+                LED_control.LED_Breathe_all(breatheCounter);     
+               if(breatheCounter == 256) {
+                   timerCounter = 0;
+                    breatheCounter = 0;
+                    horrorCounter++;  
+                    timerCounterGoal = 1000;
+                    LED_control.LED_OFF_all();  
+                 }                     
+          } else if (timerCounter*TimerSmalleastUnity >= timerCounterGoal && horrorCounter == 13 ) {
+            timerCounter = 0;
+             horrorCounter = 0;  
+             timerCounterGoal = 400;             
+          } 
+ }
+ 
  void timerEvent() {
     if (modeSelect == timerBlink) {
           timerCounter++;
           if (timerCounter*TimerSmalleastUnity >= timerCounterGoal){
-              timerCounter = 0;
-               LED_control.LED_Blink_all(timeArrive);    
-               timeArrive = !timeArrive;                                    
+             doBlinkLED();                                
           } 
      } else if(modeSelect == timerBreathe) {
           timerCounter++;
@@ -101,6 +157,11 @@ void LED_mode_by_button() {
                  }
               LED_control.LED_Breathe_all(breatheCounter);
           }      
-     }
+     } else if(modeSelect == timerHorror) {
+        doHorrorLED();
+     }     
  }
+
+
+
 
